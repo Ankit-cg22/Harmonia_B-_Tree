@@ -625,25 +625,32 @@ int insert_internal(node* nn,int ind,int key,int* dd,int orig)    // insert key 
         else
             break;
       }
-
+      //retriving index of parent node
       int p=parent(ind);
+      //When parent node is null and insertion in non leaf node
       if(p==-1 || nodes[p]==NULL)                              // parent is NULL
       {
         cout<<endl;
         cout<<"In non-leaf with parent NULL, ind: "<<ind<<"; parent(ind): "<<p<<endl;
+        //modification of prefix sum for the new parent node at 0th index
         put_in_array(prefix_sum,k2,1,0);
         x=2;
-
+        //creation of new node (parent)
         node* nn3; nn3=(node*)malloc(sizeof(node));
         init(nn3);
         //cout<<"middle_element: "<<middle_element<<endl;
+        //move the middle key of the child node in parent node
         put_in_middle(nn3,0,middle_element,dd_mid);
         //cout<<"middle_element: "<<middle_element<<endl;
+        //put the newly created parent node in 0th Index of nodes array
         put_in_nodes(0,nn3);
 
         int pf_2=-1;
         int ss=prefix_sum[1]+2;
         cout<<"ss: "<<ss<<" ; orig+2: "<<orig+2<<"; ind: "<<ind<<endl;
+        //division of key arrays based on middle element that has moved to new parent node
+        //and based on number of keys, modifying the prefix sum array
+        //calculating incremented index after insertion from root node
         if(ss>orig+2)
         {
           pf_2=ss-2+no_of_keys_of_v1;
@@ -658,6 +665,7 @@ int insert_internal(node* nn,int ind,int key,int* dd,int orig)    // insert key 
         cout<<"pf_2: "<<pf_2<<endl;
         incremented_index=pf_2+2;;
         cout<<"incremented_index in orig+2: "<<incremented_index<<endl;
+        //modyfying prefix sum for the second child of neww parent
         put_in_array(prefix_sum,k2,pf_2,2);
 
         cout<<"prefix_sum before "<<endl;
@@ -666,30 +674,36 @@ int insert_internal(node* nn,int ind,int key,int* dd,int orig)    // insert key 
           cout<<prefix_sum[i]<<" ";
         }
         cout<<endl;
-
+       //modifying prefix sum 
         for(int i=1;i<k2;i++)
         {
           if(prefix_sum[i]==MAX)
             break;
 
           if(prefix_sum[i]>ind)
+             // all the nodes present ahead of prefix_sum[i] increased by x(2) due to creation of 2 nodes (parent and 2nd child)
             prefix_sum[i]+=x;
         }
-
+        
         cout<<"prefix_sum after: "<<endl;
         for(int i=0;i<k2 && prefix_sum[i]!=MAX;i++)
         {
           cout<<prefix_sum[i]<<" ";
         }
         cout<<endl;
-
+        //node was inserted at 2nd pos
         return 2;
       }
       else
       {
+        //whwn parent is not null
+        //find the index of parent node
         int p=parent(ind);
         int xx=insert_internal(nodes[p],p,middle_element,dd_mid,ind);
+        //recursively call this function to enter key = middle_element in the node stored at nodes[p] 
+        //we move middle_element to parent , ie we move the value up into a new higher node 
         ind+=xx;
+        //xx - the index where the node was finally inserted
         x=1;
       }
       cout<<endl;
@@ -701,9 +715,11 @@ int insert_internal(node* nn,int ind,int key,int* dd,int orig)    // insert key 
           break;
 
         if(prefix_sum[i]>ind)
+          // all the nodes present ahead of prefix_sum[i] increased by x(1) due to creation of node 
           prefix_sum[i]+=x;
       }
 
+      //calculating incremented index after insertion 
       int pf_2=-1;
       int ss=prefix_sum[ind];
       cout<<"ss: "<<ss<<" ; orig+xx+1: "<<orig+xx+1<<"; ind: "<<ind<<"; xx: "<<xx<<"; orig: "<<orig<<endl;
@@ -721,8 +737,9 @@ int insert_internal(node* nn,int ind,int key,int* dd,int orig)    // insert key 
       cout<<"pf_2: "<<pf_2<<endl;
       incremented_index=pf_2;
       cout<<"incremented_index in orig+ind: "<<incremented_index<<endl;
+      //modyfing prefix sum for the another node created  after ind
       put_in_array(prefix_sum,k2,pf_2,ind+1);
-
+      //the current key was inserted at index xx+1 in nodes
       return (xx+1);
     }
 
